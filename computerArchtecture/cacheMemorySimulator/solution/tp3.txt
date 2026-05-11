@@ -1,0 +1,15 @@
+2020006973 Raphaela Maria Costa e Silva 
+2020006493 Emyle Santos Lima
+2020006434 Caio Teles Cunha 
+compilar usando g++ -o simulador.cpp -o simulador
+
+Usar na linha de comando :
+argumento 1. O tamanho total da cache, em bytes. Se tivermos uma cache de 4KB, por exemplo, iremos digitar 4096.
+argumento 2. O tamanho de cada linha, em bytes. Uma linha de 1KB, por exemplo, seria entrada digitando-se 1024.
+argumento 3. O tamanho de cada grupo, em unidades. Pensando em uma memória cache de 4KB, e páginas de 1KB,
+teremos 4 linhas. Se tivermos uma linha por grupo, teremos um sistema de mapeamento direto. Se
+tivermos 4 por grupo, teremos um sistema de associatividade completa.
+argumento 4. O nome do arquivo com os acessos à memória.
+
+para o exemplo acima com associatividade completa:
+./simulador 4096 1024 4 arquivo.txt

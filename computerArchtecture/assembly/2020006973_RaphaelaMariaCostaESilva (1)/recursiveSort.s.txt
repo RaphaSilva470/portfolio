@@ -1,0 +1,62 @@
+#.data
+#arr: .word 11,10,0,3,20,6,5,4,7,8,1 #vetor
+
+#.text
+addi sp x0 0
+addi x11 x0 11 # tamanho do vetor
+addi x18 x0 -1 # condicao de parada
+add x12 x0 x11 # copia do tamanho do vetor
+#la x10 arr # load o vetor no x10
+addi x11 x11 -2
+jal x1 sort
+sort: 
+	blt x18 x11 recursao # recursao enquanto o tamanho do vetor > -1
+	jalr x0 0(x1) 
+recursao:
+	sw x1 -4(sp) 
+	sw x11 -8(sp)
+    addi sp sp -8
+    addi x11 x11 -1 # nelem = nelem - 1
+    jal x1 sort
+    
+    addi sp sp 8
+    lw x1 -4(sp)
+    lw x15 -8(sp)
+    add x16, x0, x15 #inicializa o menor
+    addi x6, x15, 1 #loop
+
+menor:
+	#procura o menor elemento do vetor
+    slli x7, x6, 2
+    slli x28, x16, 2
+    add x5, x10, x28
+    lw x31, 0(x5)
+    add x5, x10, x7
+    lw x30, 0(x5)
+    bge x30, x31, continua
+    add x16, x0, x6
+    #nao troca os elementos do vetor
+continua:
+	addi x6, x6, 1
+    add x9, x0, x12
+    blt x6, x9, menor
+    #troca os elementos do vetor
+troca:
+    #a[i] 
+    slli x29, x15, 2
+    add x5, x29, x10
+    #x30 = a[i] 
+    lw x30, 0(x5)
+    #a[menor]
+    slli x28, x16, 2
+    add x5, x28, x10
+    #x31 = a[menor] 
+    lw x31, 0(x5)
+    #a[i] = a[menor]
+    add x5, x29, x10
+    sw x31, 0(x5)
+    #a[menor]
+    add x5, x28, x10
+    sw x30, 0(x5)
+    addi x15, x15, 1
+    jalr x0 0(x1)

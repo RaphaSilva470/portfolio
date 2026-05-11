@@ -1,0 +1,25 @@
+#addi x10 x0 11 #x10 = n
+#addi x11 x0 5 #x11 = posição desejada
+addi x13 x0 2 #par
+addi x15 x0 1 #impar
+addi x14 x0 3 #multiplicar por 3
+addi x16 x0 1 #condição de parada
+remu x12 x10 x13 #olha se é par ou impar
+beq x12 x15 impar #se impar
+beq x12 x0 par #se par
+# se par divide n por 2, incrementa x16
+par:
+divu x10 x10 x13 
+addi x16 x16 1 
+# se a condição de parada for satisfeita retorna x10, se não executa impar
+beq x16 x11 break 
+j impar
+#se impar multiplica n por três e incrementa 1, incrementa x16
+impar:
+mul x10 x10 x14
+addi x10 x10 1
+addi x16 x16 1
+# se a condição de parada for satisfeita retorna x10, se não executa par
+beq x16 x11 break
+j par
+break:
