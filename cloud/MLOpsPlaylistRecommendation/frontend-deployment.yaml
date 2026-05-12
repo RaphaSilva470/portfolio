@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist-frontend
+  namespace: raphaelasilva
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: playlist-recommendor
+  template:
+    metadata:
+      labels:
+        app: playlist-recommendor
+    spec:
+      containers:
+      - name: frontend
+        image: raphahausen/frontend-playlist:0.5
+        imagePullPolicy: Always          
+        ports:
+        - containerPort: 50025
+        volumeMounts:
+        - name: pickles-volume
+          mountPath: /app
+      volumes:
+      - name: pickles-volume
+        hostPath:
+          path: /home/raphaelasilva/project2-pv
+          type: DirectoryOrCreate

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dataset-config
+  namespace: raphaelasilva
+data:
+  dataset.yaml: |
+    dataset:
+      path: /playlists/2023_spotify_ds2.csv

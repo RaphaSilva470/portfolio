@@ -1,0 +1,36 @@
+apiVersion: v1
+data:
+  pyfile: "from typing import Any\nimport json\n\ndef handler(input: dict, context:
+    object) -> dict[str, Any]:\n    if not hasattr(context.env, '__dict__'):\n        context.env
+    = {}\n    \n    if 'cpu_history' not in context.env:\n        context.env['cpu_history']
+    = {}\n    \n    if 'timestamps' not in context.env:\n        context.env['timestamps']
+    = []\n        \n    # 1: Porcentagem de tráfego de saída\n    bytes_sent = input.get('net_io_counters_eth0-bytes_sent1',
+    0)\n    bytes_recv = input.get('net_io_counters_eth0-bytes_recv1', 0)\n    \n
+    \   total_bytes = bytes_sent + bytes_recv\n    if total_bytes > 0:\n        percent_egress
+    = (bytes_sent / total_bytes) * 100\n    else:\n        percent_egress = 0.0\n
+    \   \n    # 2: Porcentagem de cache em memória \n    cached = input.get('virtual_memory-cached',
+    0)\n    buffers = input.get('virtual_memory-buffers', 0)\n    total_memory = input.get('virtual_memory-total',
+    1)\n    \n    percent_cache = ((cached + buffers) / total_memory) * 100 if total_memory
+    > 0 else 0.0\n    \n    # 3: Média móvel de CPU \n    timestamp = input.get('timestamp',
+    '')\n    cpu_data = {}\n    cpu_count = 0\n    \n    # Encontrar CPUs \n    for
+    key, value in input.items():\n        if key.startswith('cpu_percent-') and key
+    != 'cpu_percent':\n            cpu_id = key.replace('cpu_percent-', '')\n            cpu_data[cpu_id]
+    = float(value)\n            cpu_count += 1\n    \n    for cpu_id, cpu_util in
+    cpu_data.items():\n        if cpu_id not in context.env['cpu_history']:\n            context.env['cpu_history'][cpu_id]
+    = []\n        \n        context.env['cpu_history'][cpu_id].append({\n            'timestamp':
+    timestamp,\n            'utilization': cpu_util\n        })\n        \n        if
+    len(context.env['cpu_history'][cpu_id]) > 12:\n            context.env['cpu_history'][cpu_id].pop(0)\n
+    \   \n    cpu_averages = {}\n    for cpu_id, history in context.env['cpu_history'].items():\n
+    \       if history:\n            avg_util = sum(h['utilization'] for h in history)
+    / len(history)\n            cpu_averages[f'avg-util-cpu{cpu_id}-60sec'] = round(avg_util,
+    2)\n    \n    result = {\n        'timestamp': timestamp,\n        'percent-network-egress':
+    round(percent_egress, 2),\n        'percent-memory-cache': round(percent_cache,
+    2),\n        **cpu_averages  \n    }\n    \n    return result\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2025-12-10T11:29:26Z"
+  name: pyfile
+  namespace: raphaelasilva
+  resourceVersion: "31537715"
+  uid: 03f9b20d-8e99-4a1c-ba33-7620c31dc57a
+

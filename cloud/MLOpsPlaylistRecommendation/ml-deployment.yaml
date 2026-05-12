@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ml-job
+  namespace: raphaelasilva
+spec:
+  ttlSecondsAfterFinished: 60   
+  template:
+    metadata:
+      labels:
+        app: ml-recommendor
+      annotations:
+        dataset-version: "2025-11-01"
+    spec:
+      restartPolicy: Never     
+      containers:
+      - name: ml-playlist-generator
+        image: raphahausen/ml-playlist-generator:4.5
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: pickles-volume
+          mountPath: /app
+        - name: datasets-volume
+          mountPath: /playlists
+        - name: dataset-config-volume
+          mountPath: /config
+          readOnly: true
+      volumes:
+      - name: pickles-volume
+        hostPath:
+          path: /home/raphaelasilva/project2-pv
+          type: DirectoryOrCreate
+      - name: datasets-volume
+        hostPath:
+          path: /home/datasets/spotify
+          type: Directory
+      - name: dataset-config-volume
+        configMap:
+          name: dataset-config

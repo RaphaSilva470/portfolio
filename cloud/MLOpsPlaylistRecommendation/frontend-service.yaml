@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: playlist-frontend-service
+  namespace: raphaelasilva
+spec:
+  selector:
+    app: playlist-recommendor
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 50025
+    targetPort: 50025
